@@ -12,7 +12,7 @@ def Conversion(D):  #Convert the data set to distance from the left down angle (
 def SelectPair(D):
     Pair=[]
     for i in range ( int(len(D[2,:])/4) ): 
-    print( 100*(i*1.0)/(1.0*int(len(D[2,:])/4)) '%' )
+        print( 100*(i*1.0)/(1.0*int(len(D[2,:])/4)) '%' )
         for t in range ( int(len(D[2,:])/4) ):
             if D[0,i*4]!= D[0,t*4] : 
                 space_distance = (D[2,i*4]-D[2,t*4])*(D[2,i*4]-D[2,t*4]) + (D[1,i*4]-D[1,t*4])*(D[1,i*4]-D[1,t*4])
