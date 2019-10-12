@@ -13,14 +13,14 @@ import matplotlib.pyplot as plt
 
 ID1 = []
 for i in range(len(nd[0])):
-    if nd[0,i] == 11041330:
+    if nd[0,i] == 62835700:
         ID1 +=[nd[1,i],nd[2,i],nd[3,i]]
 ID1 = np.array(ID1)
 ID1 = np.reshape(ID1,(int(len(ID1)/3),3))
 
 ID2 = []
 for i in range(len(nd[0])):
-    if nd[0,i] == 11048330:
+    if nd[0,i] == 62835790:
         ID2 +=[nd[1,i],nd[2,i],nd[3,i]]
 ID2 = np.array(ID2)
 ID2 = np.reshape(ID2,(int(len(ID2)/3),3))

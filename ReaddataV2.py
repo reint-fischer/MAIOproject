@@ -46,7 +46,7 @@ def selectMedsea(ID,lat,lon,time):
     return np.array((newID,newlat,newlon,newtime))
 
 if __name__ == '__main__':
-    ID,latitude,longitude,time = OpenDrifterdata('/home/giovanni/MAIO/Python/driftertrajGPS_1.03.nc')
+    ID,latitude,longitude,time = OpenDrifterdata('C:/Users/Gebruiker/Downloads/driftertrajGPS_1.03.nc')
     Data_Mediterrean = selectMedsea(ID,latitude, longitude, time)
     Data_Mediterrean = Conversion(Data_Mediterrean)
     Pair = SelectPair(Data_Mediterrean)
