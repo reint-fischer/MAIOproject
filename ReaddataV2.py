@@ -10,7 +10,8 @@ def Conversion(D):  #Convert the data set to distance from the left down angle (
     return D    
 
 def SelectPair(D):
-    Pair=[]
+    Pair= np.zeros([100,2])
+    k=0
     for i in range ( int(len(D[2,:])/4) ): 
         print( 100*(i*1.0)/(1.0*int(len(D[2,:])/4)), '%' )
         for t in range ( int(len(D[2,:])/4) ):
@@ -18,8 +19,10 @@ def SelectPair(D):
                 space_distance = (D[2,i*4]-D[2,t*4])*(D[2,i*4]-D[2,t*4]) + (D[1,i*4]-D[1,t*4])*(D[1,i*4]-D[1,t*4])
                 time_distance = (D[3,i*4] - D[3,t*4])*(D[3,i*4] - D[3,t*4]) 
                 if space_distance < 100 and time_distance < 36 :
-                   if not( [D[0,i*4], D[0,t*4]] in Pair): Pair +=  [D[0,i*4], D[0,t*4]] 
-    return Pair 
+                   if not( [D[0,i*4], D[0,t*4]] in Pair): 
+                       Pair[k,:] =  [D[0,i*4], D[0,t*4]] 
+                       k = k+1
+    return Pair        
 
 def OpenDrifterdata(filelocation): #Open netcdf file and unpack relevant parameters
     file = Dataset(filelocation,'r+',format = 'NETCDF4')
