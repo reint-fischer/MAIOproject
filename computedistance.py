@@ -33,6 +33,6 @@ if __name__ == "__main__":
     pairs = np.genfromtxt('UnPair.txt', delimiter=',')
     for i in range(len(pairs)):
         d,t = ComputeDistance(pairs[i,0],pairs[i,1],Data_Mediterrean)
-        np.savetxt('pairdistance{0}'.format[i],delimiter = ',')
+        np.savetxt('PairDistances/Pair{0}.csv'.format(i),np.asarray((d,t)),delimiter = ',')
         
     
