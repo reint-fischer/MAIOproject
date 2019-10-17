@@ -10,29 +10,45 @@ import numpy as np
 import pandas as pd
 
 def ComputeDistance(ID1,ID2,Data_Mediterrenean):
-    id1 = []
-    id2 = []
+    id1 = [] #select only the 1st ID from all Mediterrenean data
+    id2 = [] #select only the 1st ID from all Mediterrenean data
     for i in range(len(Data_Mediterrenean[0])):
-        if Data_Mediterrenean[0,i] == ID1:
-            id1 +=[[Data_Mediterrenean[1,i],Data_Mediterrenean[2,i],Data_Mediterrenean[3,i]]]
-        if Data_Mediterrenean[0,i] == ID2:
-            id2 +=[[Data_Mediterrenean[1,i],Data_Mediterrenean[2,i],Data_Mediterrenean[3,i]]]
-    id1 = np.asarray(id1)
-    id2 = np.asarray(id2)
-    distance = []
-    time = []
-    for i in range(len(id1)):
+        if Data_Mediterrenean[0,i] == ID1: #select right ID
+            id1 +=[[Data_Mediterrenean[1,i],Data_Mediterrenean[2,i],Data_Mediterrenean[3,i]]] #save latitude, longitude, time
+        if Data_Mediterrenean[0,i] == ID2: #select right ID
+            id2 +=[[Data_Mediterrenean[1,i],Data_Mediterrenean[2,i],Data_Mediterrenean[3,i]]] #save latitude, longitude, time
+    id1 = np.asarray(id1) #save as array for easy indexing
+    id2 = np.asarray(id2) #save as array for easy indexing
+    distance = [] #generate empty distance timeseries
+    time = [] #generate corresponding timeaxis
+    for i in range(len(id1)): #compare all measurement data
         for j in range(len(id2)):
-            if id1[i,2]==id2[j,2]:
-                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)]
-                time += [id1[i,2]]
-    return distance,time
+            if id1[i,2]==id2[j,2]: # if the time is equal
+                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)] #compute distance and add to timeseries
+                time += [id1[i,2]] #add timestamp to timeaxis
+    mind = distance.index(min(distance)) #find the index of the 
+    d1 = list(reversed(distance[:mind+1]))
+    d2 = distance[mind:]
+    t1 = list(reversed(time[:mind+1]))
+    t2 = time[mind:]
+    for n in range(len(t1)-1):
+        if t1[n]-1 != t1[n+1]:
+            t1 = t1[:n]
+            d1 = d1[:n]
+            break
+    for n in range(len(t2)-1):
+        if t2[n]+1 != t2[n+1]:
+            t2 = t2[:n]
+            d2 = d2[:n]
+            break
+    return distance,time,d1,d2,t1,t2,mind
 
 if __name__ == "__main__":
-   # d,t = ComputeDistance(62835700,62835790,Data_Mediterrean)
-    pairs = np.genfromtxt('UnPair.txt', delimiter=',')
+    nd = np.genfromtxt('Data/MedSeaIDs.txt',delimiter=',')
+#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
+    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
     for i in range(len(pairs)):
-        d,t = ComputeDistance(pairs[i,0],pairs[i,1],Data_Mediterrean)
-        np.savetxt('PairDistances/Pair{0}.csv'.format(i),np.asarray((d,t)),delimiter = ',')
-        
+        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
+        np.savetxt('BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
+        np.savetxt('ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
     
