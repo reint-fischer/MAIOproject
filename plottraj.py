@@ -11,9 +11,11 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
-nPair = 32
+nPair = 24
 
 d,t = np.genfromtxt('PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
+b,tb = np.genfromtxt('BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')
+f,tf = np.genfromtxt('ForwardDistances/FDPair{0}.csv'.format(nPair),delimiter = ',')
 pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
 nd = np.genfromtxt('Data/MedSeaIDslonlat.txt', delimiter=',')
 #%%
@@ -42,3 +44,10 @@ f2 = plt.figure(2,figsize=(9,4))
 ax2 = plt.axes()
 ax2.plot(t,d)
 
+f3 = plt.figure(3,figsize=(9,4))
+ax3 = plt.axes()
+ax3.plot(b)
+
+f4 = plt.figure(4,figsize=(9,4))
+ax4 = plt.axes()
+ax4.plot(f)

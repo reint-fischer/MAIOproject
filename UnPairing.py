@@ -1,6 +1,6 @@
 import numpy as np
 
-Pair = np.genfromtxt('Pair.txt', delimiter=',')
+Pair = np.genfromtxt('Data/Pair.txt', delimiter=',')
 
 
 k = 0 
@@ -14,4 +14,4 @@ for i in range (0,70):
           UnPair[k] = A
           k= k+1
 
-np.savetxt('UnPair.txt',UnPair,delimiter=',')
+np.savetxt('Data/UnPair.txt',UnPair,delimiter=',')
