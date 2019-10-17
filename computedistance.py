@@ -26,17 +26,17 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
             if id1[i,2]==id2[j,2]: # if the time is equal
                 distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)] #compute distance and add to timeseries
                 time += [id1[i,2]] #add timestamp to timeaxis
-    mind = distance.index(min(distance)) #find the index of the 
-    d1 = list(reversed(distance[:mind+1]))
-    d2 = distance[mind:]
-    t1 = list(reversed(time[:mind+1]))
-    t2 = time[mind:]
-    for n in range(len(t1)-1):
-        if t1[n]-1 != t1[n+1]:
-            t1 = t1[:n]
-            d1 = d1[:n]
-            break
-    for n in range(len(t2)-1):
+    mind = distance.index(min(distance)) #find the index of the minimum separation distance to slice both 'distance' and 'time'
+    d1 = list(reversed(distance[:mind+1])) #slice the timeseries up to the minimum and reverse it to create a backward timeseries
+    d2 = distance[mind:] #slice the timeseries from the minimum onwards to create a forward timeseries
+    t1 = list(reversed(time[:mind+1])) #slice te timeaxis in the same way as the timeseries
+    t2 = time[mind:] #slice te timeaxis in the same way as the timeseries
+    for n in range(len(t1)-1): #check for continuity
+        if t1[n]-1 != t1[n+1]: #In backward timeaxis each next timestep should be 1 smaller
+            t1 = t1[:n] #slice continuous timeaxis
+            d1 = d1[:n] #slice corresponding backward distance timeseries
+            break #stop for-loop when discontinuity is found
+    for n in range(len(t2)-1): #do the same for the forward timeseries
         if t2[n]+1 != t2[n+1]:
             t2 = t2[:n]
             d2 = d2[:n]
@@ -45,10 +45,10 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
 
 if __name__ == "__main__":
     nd = np.genfromtxt('Data/MedSeaIDs.txt',delimiter=',')
-#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
-    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
-    for i in range(len(pairs)):
-        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
-        np.savetxt('BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
-        np.savetxt('ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
-    
+    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
+#    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
+#    for i in range(len(pairs)):
+#        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
+#        np.savetxt('BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
+#        np.savetxt('ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
+#    
