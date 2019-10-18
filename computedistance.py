@@ -49,6 +49,6 @@ if __name__ == "__main__":
 #    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
 #    for i in range(len(pairs)):
 #        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
-#        np.savetxt('BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
-#        np.savetxt('ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
+#        np.savetxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
+#        np.savetxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
 #    
