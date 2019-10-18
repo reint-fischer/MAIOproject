@@ -8,21 +8,7 @@ def Conversion(D):  #Convert the data set to distance from the left down angle (
        D[2,i] = 2*m.pi*Earth_radius*m.cos(np.deg2rad(D[1,i]))*(D[2,i]-5)/360
        D[1,i] = 2*m.pi*Earth_radius*(D[1,i] - 30)/360 
     return D    
-
-def SelectPair(D):
-    Pair= np.zeros([100,2])
-    k=0
-    for i in range ( int(len(D[2,:])/4) ): 
-        print( 100*(i*1.0)/(1.0*int(len(D[2,:])/4)), '%' )
-        for t in range ( int(len(D[2,:])/4) ):
-            if D[0,i*4]!= D[0,t*4] : 
-                space_distance = (D[2,i*4]-D[2,t*4])*(D[2,i*4]-D[2,t*4]) + (D[1,i*4]-D[1,t*4])*(D[1,i*4]-D[1,t*4])
-                time_distance = (D[3,i*4] - D[3,t*4])*(D[3,i*4] - D[3,t*4]) 
-                if space_distance < 100 and time_distance < 36 :
-                   if not( [D[0,i*4], D[0,t*4]] in Pair): 
-                       Pair[k,:] =  [D[0,i*4], D[0,t*4]] 
-                       k = k+1
-    return Pair        
+      
 
 def OpenDrifterdata(filelocation): #Open netcdf file and unpack relevant parameters
     file = Dataset(filelocation,'r+',format = 'NETCDF4')
@@ -50,7 +36,6 @@ if __name__ == '__main__':
     Data_Mediterrean = selectMedsea(ID,latitude, longitude, time) #select measurements made in Mediterrenean
     np.savetxt('Data/MedSeaIDslonlat.txt',Data_Mediterrean,delimiter=',') #save data of all measurements made in the Mediterrenean
     Data_Mediterrean = Conversion(Data_Mediterrean) #convert measurements to flat grid
-    Pair = SelectPair(Data_Mediterrean) #Find chance pairs
     np.savetxt('Data/MedSeaIDs.txt',Data_Mediterrean,delimiter=',') #save data of all converted measurements
-    np.savetxt('Data/Pair.txt',Pair,delimiter=',')  #Save chance pair IDs
+
     

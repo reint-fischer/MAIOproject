@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 
 nPair = 24
 
-d,t = np.genfromtxt('PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
-b,tb = np.genfromtxt('BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')
-f,tf = np.genfromtxt('ForwardDistances/FDPair{0}.csv'.format(nPair),delimiter = ',')
+d,t = np.genfromtxt('Data/PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
+b,tb = np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')
+f,tf = np.genfromtxt('Data/ForwardDistances/FDPair{0}.csv'.format(nPair),delimiter = ',')
 pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
 nd = np.genfromtxt('Data/MedSeaIDslonlat.txt', delimiter=',')
 #%%
@@ -51,3 +51,18 @@ ax3.plot(b)
 f4 = plt.figure(4,figsize=(9,4))
 ax4 = plt.axes()
 ax4.plot(f)
+
+#%% backward and forward timeseries
+
+b = []
+f = []
+f5 = plt.figure(5)
+ax5 = plt.axes()
+f6 = plt.figure(6)
+ax6 = plt.axes()
+
+for i in range(len(pairs)):
+    b += [np.square(np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),delimiter = ',')[0])]
+    f += [np.square(np.genfromtxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),delimiter = ',')[0])]
+    ax5.loglog(b[i])
+    ax6.loglog(f[i])
