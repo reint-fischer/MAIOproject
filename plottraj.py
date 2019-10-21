@@ -11,7 +11,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
-nPair = 24
+nPair = 0
 
 d,t = np.genfromtxt('Data/PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
 b,tb = np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')
@@ -46,11 +46,15 @@ ax2.plot(t,d)
 
 f3 = plt.figure(3,figsize=(9,4))
 ax3 = plt.axes()
-ax3.plot(b)
+ax3.plot(t)
 
 f4 = plt.figure(4,figsize=(9,4))
 ax4 = plt.axes()
-ax4.plot(f)
+ax4.plot(b)
+
+f5 = plt.figure(5,figsize=(9,4))
+ax5 = plt.axes()
+ax5.plot(f)
 
 #%% backward and forward timeseries
 

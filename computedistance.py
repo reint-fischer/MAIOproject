@@ -24,7 +24,7 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
     for i in range(len(id1)): #compare all measurement data
         for j in range(len(id2)):
             if id1[i,2]==id2[j,2]: # if the time is equal
-                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)] #compute distance and add to timeseries
+                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)*1000] #compute distance in meters and add to timeseries
                 time += [id1[i,2]] #add timestamp to timeaxis
     mind = distance.index(min(distance)) #find the index of the minimum separation distance to slice both 'distance' and 'time'
     d1 = list(reversed(distance[:mind+1])) #slice the timeseries up to the minimum and reverse it to create a backward timeseries
@@ -45,10 +45,10 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
 
 if __name__ == "__main__":
     nd = np.genfromtxt('Data/MedSeaIDs.txt',delimiter=',')
-    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
-#    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
-#    for i in range(len(pairs)):
-#        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
-#        np.savetxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
-#        np.savetxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
+#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
+    pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
+    for i in range(len(pairs)):
+        d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
+        np.savetxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
+        np.savetxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
 #    
