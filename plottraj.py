@@ -11,7 +11,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
-nPair = 0
+nPair = 2
 
 d,t = np.genfromtxt('Data/PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
 b,tb = np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')
@@ -60,13 +60,13 @@ ax5.plot(f)
 
 b = []
 f = []
-f5 = plt.figure(5)
-ax5 = plt.axes()
 f6 = plt.figure(6)
 ax6 = plt.axes()
+f7 = plt.figure(7)
+ax7 = plt.axes()
 
 for i in range(len(pairs)):
     b += [np.square(np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),delimiter = ',')[0])]
     f += [np.square(np.genfromtxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),delimiter = ',')[0])]
-    ax5.loglog(b[i])
-    ax6.loglog(f[i])
+    ax6.loglog(b[i])
+    ax7.loglog(f[i])
