@@ -24,7 +24,7 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
     for i in range(len(id1)): #compare all measurement data
         for j in range(len(id2)):
             if id1[i,2]==id2[j,2]: # if the time is equal
-                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)*1000] #compute distance in meters and add to timeseries
+                distance += [np.sqrt((id1[i,0]-id2[j,0])**2+(id1[i,1]-id2[j,1])**2)] #compute distance in km and add to timeseries
                 time += [id1[i,2]] #add timestamp to timeaxis
     mind = distance.index(min(distance)) #find the index of the minimum separation distance to slice both 'distance' and 'time'
     d1 = list(reversed(distance[:mind+1])) #slice the timeseries up to the minimum and reverse it to create a backward timeseries
