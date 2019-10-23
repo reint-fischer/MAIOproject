@@ -22,9 +22,9 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
             A = timeseries[t]
             for k in range(1,len(A[0][:])) : 
                 if A[0][k]> GridGoals[i] and A[0][k-1]< GridGoals[i]: 
-                    Time = Time + (np.abs(A[1][k]-A[1][0]))
+                    Time = Time + (np.abs(A[1][k]-A[1][0])/24)
                     n = n+1 
-                    Errors.append(np.abs(A[1][k]-A[1][0]))
+                    Errors.append(np.abs(A[1][k]-A[1][0])/24)
                     break
         if n != 0 :
             FSLE[0,i] = math.pow(Time/n,-1)*math.log(r)
@@ -37,6 +37,7 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
             print("Warning  :",i)
         while len(Errors) > 0 : Errors.pop()
     return GridGoals,FSLE
+
 
 def Kd(timeseries,Dbeg=-1,Dend=3,nbin=50):
     MaxLen = 1
@@ -69,7 +70,6 @@ def Kd(timeseries,Dbeg=-1,Dend=3,nbin=50):
     return Kx,Kstat
 
 #-------> MAIN <-------
-
 DirecInputForward = "Data/ForwardDistances/"
 DirecInputBackward = "Data/BackwardsDistances/"
 
@@ -116,44 +116,37 @@ fig, ax1 = plt.subplots()
 ax1.set_yscale('log')
 ax1.set_xscale('log')
 ax1.set_xlabel('Distance (km)')
-ax1.set_ylabel('FSLE')
 
-ax1.errorbar(GridGoals, FSLE_SyFor[0,:],
-            xerr=xError,
-            yerr=FSLE_SyFor[2,:],
-            fmt='-o', color=(0.5, 0.1, 0.4, 0.9))
-ax1.errorbar(GridGoals, FSLE_SyBac[0,:],
-            xerr=xError,
-            yerr=FSLE_SyBac[2,:],
-            fmt='-o', color=(0.5, 0.1, 0.4, 0.3))
-ax1.errorbar(GridGoals, FSLE_Asy[0,:],
-            xerr=xError,
-            yerr=FSLE_Asy[2,:],
-            fmt='-o', color=(0.1, 0.5, 0.2, 0.9))
-ax1.errorbar(GridGoals, FSLE_ChanceFor[0,:],
-            xerr=xError,
-            yerr=FSLE_ChanceFor[2,:],
-            fmt='-o', color=(0.9, 0.3, 0., 0.6))
-ax1.errorbar(GridGoals, FSLE_ChanceBac[0,:],
-            xerr=xError,
-            yerr=FSLE_ChanceBac[2,:],
-            fmt='-o', color=(0.9, 0.3, 0., 0.2))
+ax1.set_ylabel('FSLE [day^-1]')
+
+ax1.plot(GridGoals, FSLE_SyFor[0,:], '-o', color='pink', label='SyForw')
+ax1.fill_between(GridGoals, FSLE_SyFor[0,:]+(FSLE_SyFor[2,:]/2), FSLE_SyFor[0,:]-(FSLE_SyFor[2,:]/2), facecolor='pink', alpha=0.5)     
+
+ax1.plot(GridGoals, FSLE_SyBac[0,:], '-o', color='gray', label='SyBack')
+ax1.fill_between(GridGoals, FSLE_SyBac[0,:]+(FSLE_SyBac[2,:]/2), FSLE_SyBac[0,:]-(FSLE_SyBac[2,:]/2), facecolor='gray', alpha=0.5)   
+
+ax1.plot(GridGoals, FSLE_Asy[0,:], '-o', color='brown', label='Asy')
+ax1.fill_between(GridGoals, FSLE_Asy[0,:]+(FSLE_Asy[2,:]/2), FSLE_Asy[0,:]-(FSLE_Asy[2,:]/2), facecolor='brown', alpha=0.5)  
+
+ax1.plot(GridGoals, FSLE_ChanceFor[0,:], '-o', color='red', label='ChanceForw')
+ax1.fill_between(GridGoals, FSLE_ChanceFor[0,:]+(FSLE_ChanceFor[2,:]/2), FSLE_ChanceFor[0,:]-(FSLE_ChanceFor[2,:]/2), facecolor='red', alpha=0.5)  
+
+ax1.plot(GridGoals, FSLE_ChanceBac[0,:], '-o', color='blue', label='ChanceBack')
+ax1.fill_between(GridGoals, FSLE_ChanceBac[0,:]+(FSLE_ChanceBac[2,:]/2), FSLE_ChanceBac[0,:]-(FSLE_ChanceBac[2,:]/2), facecolor='blue', alpha=0.5)  
 
 ax2 = ax1.twinx() 
-
-
 ax2.set_ylabel('Components')  
-ax2.plot(GridGoals, FSLE_SyFor[1,:], color=(0.5, 0.1, 0.4, 0.9))
-ax2.plot(GridGoals, FSLE_SyBac[1,:], color=(0.5, 0.1, 0.4, 0.3))
-ax2.plot(GridGoals, FSLE_Asy[1,:], color=(0.1, 0.5, 0.2, 0.9))
-ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color=(0.9, 0.3, 0., 0.6))
-ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color=(0.9, 0.3, 0., 0.2))
+
+ax2.plot(GridGoals, FSLE_SyFor[1,:], color='pink')
+ax2.plot(GridGoals, FSLE_SyBac[1,:], color='gray')
+ax2.plot(GridGoals, FSLE_Asy[1,:], color='brown')
+ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color='red')
+ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color='blue')
 
 
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
+legend = ax1.legend(loc='upper right', shadow=True, fontsize='x-large')
 plt.show()
-
-#%%
  
 fig, ax4 = plt.subplots()
 ax4.set_yscale('log')
