@@ -3,47 +3,7 @@ import math as math
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 
-DirecInputForward = "Data/ForwardDistances/"
-DirecInputBackward = "Data/BackwardsDistances/"
-pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
-
-
-
-ChancePair = []       #-> Two list, one with the pairs and one with the chancepairs
-Pair = []
-MaxLenPair = 0        #-> For localizing the dataset which is the longest in the group
-MaxLenChancePair = 0
-
-ChancePairb = []       #-> Two list, one with the pairs and one with the chancepairs
-Pairb = []
-MaxLenPairb = 0        #-> For localizing the dataset which is the longest in the group
-MaxLenChancePairb = 0
-
-for i in range (0,33):
-    Ab = np.genfromtxt(DirecInputBackward+'BDPair'+str(i)+".csv", delimiter=',')  #It read the file and copy in A
-    A = np.genfromtxt(DirecInputForward+'FDPair'+str(i)+".csv", delimiter=',')  #It read the file and copy in A
-    if len(Ab.shape) > 1:
-        ChancePairb.append(Ab)
-        ChancePair.append(A)
-        Bb = len(Ab[0][:])
-        B = len(A[0][:])
-        if Bb > MaxLenChancePairb :
-            MaxLenChancePairb = Bb
-        if B > MaxLenChancePair :
-            MaxLenChancePair = B
-    else:
-        Pairb.append(Ab)
-        Bb = 1
-        if Bb > MaxLenPairb :
-            MaxLenPairb = Bb
-        Pair.append(A)
-        B = len(A[0][:])
-        if B > MaxLenPair :
-            MaxLenPair = B
-        
-    
-
-############################---FSLE---################################
+#-------> FUNCTIONS <-------
 
 def FSLE(timeseries,do= 1,num=70,r=1.1):
         
@@ -78,33 +38,85 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
         while len(Errors) > 0 : Errors.pop()
     return GridGoals,FSLE
 
+#-------> MAIN <-------
 
-xError = np.zeros(num) #Error space (equal to zero)
+DirecInputForward = "Data/ForwardDistances/"
+DirecInputBackward = "Data/BackwardsDistances/"
+
+PairAsy = []
+PairSyFor =  []
+PairSyBac =  []
+ChancePairFor = []  
+ChancePairBac = []
+
+for i in range (0,33):
+   A = np.genfromtxt(DirecInputBackward+'BDPair'+str(i)+".csv", delimiter=',')  #It read the file and copy in A
+   Ab = np.genfromtxt(DirecInputForward+'FDPair'+str(i)+".csv", delimiter=',') 
+   if len(A.shape) == 1 :
+      PairAsy.append(Ab)
+   else : 
+      if A[0][-1] < 5 :
+         PairSyFor.append(Ab) 
+         PairSyBac.append(A)
+      else : 
+         ChancePairFor.append(Ab)
+         ChancePairBac.append(A)
+
+############################---FSLE---###############################
+
+GridGoals, FSLE_Asy = FSLE(PairAsy)
+GridGoals, FSLE_SyFor = FSLE(PairSyFor)
+GridGoals, FSLE_SyBac = FSLE(PairSyBac)
+GridGoals, FSLE_ChanceFor = FSLE(ChancePairFor)
+GridGoals, FSLE_ChanceBac = FSLE(ChancePairBac)
 
 
-###Forward###
-f1 = plt.figure(1)
-ax1 = plt.axes()
-plt.title('Forward FSLE')
-color = 'tab:red'
+xError = np.zeros(len(GridGoals)) #Error space (equal to zero)
+
+#-------> PLOT <-------
+
+fig, ax1 = plt.subplots()
+
+ax1.set_yscale('log')
+ax1.set_xscale('log')
 ax1.set_xlabel('Distance (km)')
-#ax1.set_yscale('log')
-ax1.set_ylabel('FSLE', color=color)
-ax1.loglog(FSLE(ChancePair)[0], FSLE(ChancePair)[1][0], color=color)
-ax1.errorbar(FSLE(ChancePair)[0], FSLE(ChancePair)[1][0],
+ax1.set_ylabel('FSLE')
+
+ax1.errorbar(GridGoals, FSLE_SyFor[0,:],
             xerr=xError,
-            yerr=FSLE(ChancePair)[1][2],
+            yerr=FSLE_SyFor[2,:],
+            fmt='-o', color='pink')
+ax1.errorbar(GridGoals, FSLE_SyBac[0,:],
+            xerr=xError,
+            yerr=FSLE_SyBac[2,:],
+            fmt='-o', color='gray')
+ax1.errorbar(GridGoals, FSLE_Asy[0,:],
+            xerr=xError,
+            yerr=FSLE_Asy[2,:],
+            fmt='-o', color='brown')
+ax1.errorbar(GridGoals, FSLE_ChanceFor[0,:],
+            xerr=xError,
+            yerr=FSLE_ChanceFor[2,:],
             fmt='-o', color='red')
-ax1.tick_params(axis='y', labelcolor=color)
+ax1.errorbar(GridGoals, FSLE_ChanceBac[0,:],
+            xerr=xError,
+            yerr=FSLE_ChanceBac[2,:],
+            fmt='-o', color='blue')
 
-ax12 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+ax2 = ax1.twinx() 
 
-color = 'tab:blue'
-ax12.set_ylabel('Components', color=color)  # we already handled the x-label with ax1
-ax12.plot(FSLE(ChancePair)[0], FSLE(ChancePair)[1][1], color=color)
-ax12.tick_params(axis='y', labelcolor=color)
 
-f1.tight_layout()  # otherwise the right y-label is slightly clipped
+ax2.set_ylabel('Components')  
+ax2.plot(GridGoals, FSLE_SyFor[1,:], color='pink')
+ax2.plot(GridGoals, FSLE_SyBac[1,:], color='gray')
+ax2.plot(GridGoals, FSLE_Asy[1,:], color='brown')
+ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color='red')
+ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color='blue')
+
+
+fig.tight_layout()  # otherwise the right y-label is slightly clipped
+plt.show()
+
 
 ####Backward###
 #f2 = plt.figure(2)
