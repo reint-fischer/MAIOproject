@@ -38,20 +38,6 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
         while len(Errors) > 0 : Errors.pop()
     return GridGoals,FSLE
 
-#############################---Diffusivity---################################
-def Kd(timeseries):
-    MaxLen = 1
-    for i in range(len(timeseries)):
-        if timeseries[i].shape[1] > MaxLen:
-            MaxLen  =  timeseries[i].shape[1]
-    K = np.zeros((len(timeseries),MaxLen,2))
-    
-    for i in range(len(timeseries)):
-        for j in range(len(timeseries[i][0])-1):
-            K[i,j,0] = (timeseries[i][0][j+1]**2-timeseries[i][0][j]**2)/3600/2
-            K[i,j,1] = (timeseries[i][0][j]+timeseries[i][0][j+1])/2
-    return K
-
 #-------> MAIN <-------
 
 DirecInputForward = "Data/ForwardDistances/"
@@ -99,39 +85,37 @@ ax1.set_ylabel('FSLE')
 ax1.errorbar(GridGoals, FSLE_SyFor[0,:],
             xerr=xError,
             yerr=FSLE_SyFor[2,:],
-            fmt='-o', color='pink')
+            fmt='-o', color='pink', label='SyForw')
 ax1.errorbar(GridGoals, FSLE_SyBac[0,:],
             xerr=xError,
             yerr=FSLE_SyBac[2,:],
-            fmt='-o', color='gray')
+            fmt='-o', color='gray', label='SyBack')
 ax1.errorbar(GridGoals, FSLE_Asy[0,:],
             xerr=xError,
             yerr=FSLE_Asy[2,:],
-            fmt='-o', color='brown')
+            fmt='-o', color='brown', label='Asy')
 ax1.errorbar(GridGoals, FSLE_ChanceFor[0,:],
             xerr=xError,
             yerr=FSLE_ChanceFor[2,:],
-            fmt='-o', color='red')
+            fmt='-o', color='red',label='ChanceForw')
 ax1.errorbar(GridGoals, FSLE_ChanceBac[0,:],
             xerr=xError,
             yerr=FSLE_ChanceBac[2,:],
-            fmt='-o', color='blue')
+            fmt='-o', color='blue',label='ChanceBack')
 
 ax2 = ax1.twinx() 
-
 
 ax2.set_ylabel('Components')  
 ax2.plot(GridGoals, FSLE_SyFor[1,:], color='pink')
 ax2.plot(GridGoals, FSLE_SyBac[1,:], color='gray')
 ax2.plot(GridGoals, FSLE_Asy[1,:], color='brown')
 ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color='red')
+
 ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color='blue')
-
-
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
+legend = ax1.legend(loc='upper right', shadow=True, fontsize='x-large')
+
 plt.show()
-
-
 ####Backward###
 #f2 = plt.figure(2)
 #ax2 = plt.axes()
