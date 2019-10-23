@@ -11,7 +11,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
-nPair = 28
+nPair = 14
 
 d,t = np.genfromtxt('Data/PairDistances/Pair{0}.csv'.format(nPair),delimiter = ',')
 b,tb = np.genfromtxt('Data/BackwardsDistances/BDPair{0}.csv'.format(nPair),delimiter = ',')

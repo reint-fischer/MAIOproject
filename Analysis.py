@@ -78,8 +78,22 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
         while len(Errors) > 0 : Errors.pop()
     return GridGoals,FSLE
 
+#############################---Diffusivity---################################
+def Kd(timeseries):
+    MaxLen = 1
+    for i in range(len(timeseries)):
+        if timeseries[i].shape[1] > MaxLen:
+            MaxLen  =  timeseries[i].shape[1]
+    K = np.zeros((len(timeseries),MaxLen,2))
+    
+    for i in range(len(timeseries)):
+        for j in range(len(timeseries[i][0])-1):
+            K[i,j,0] = (timeseries[i][0][j+1]**2-timeseries[i][0][j]**2)/3600/2
+            K[i,j,1] = (timeseries[i][0][j]+timeseries[i][0][j+1])/2
+    return K
 
-xError = np.zeros(num) #Error space (equal to zero)
+GridGoals,Fd = FSLE(ChancePair)
+xError = np.zeros(len(GridGoals)) #Error space (equal to zero)
 
 
 ###Forward###
@@ -152,14 +166,11 @@ f1.tight_layout()  # otherwise the right y-label is slightly clipped
 #            fmt='-o', color='green')
 #
 #
-#############################---Diffusivity---################################
-#K = np.zeros((len(Pair),MaxLenPair,2))
-#f4 = plt.figure(4,figsize=(10,8))
-#ax4 = plt.axes()
-#ax4.set_ylabel('Diffusivity K [$m^2$/s]')
-#ax4.set_xlabel('Distance (km)')
-#for i in range(len(Pair)):
-#    for j in range(len(Pair[i][0])-1):
-#        K[i,j,0] = (Pair[i][0][j+1]**2-Pair[i][0][j]**2)/3600/2
-#        K[i,j,1] = (Pair[i][0][j]+Pair[i][0][j+1])/2
-#    ax4.loglog(K[i,:,1]/1000,K[i,:,0],'o',label = 'floats {0} and {1}'.format(int(pairs[i,0]),int(pairs[i,1])))
+
+K = Kd(Pair) 
+f4 = plt.figure(4,figsize=(10,8))
+ax4 = plt.axes()
+ax4.set_ylabel('Diffusivity K [$m^2$/s]')
+ax4.set_xlabel('Distance (km)')
+for i in K:  
+    ax4.loglog(i[:,1],i[:,0],'o')
