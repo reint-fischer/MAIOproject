@@ -38,8 +38,7 @@ def FSLE(timeseries,do= 1,num=70,r=1.1):
         while len(Errors) > 0 : Errors.pop()
     return GridGoals,FSLE
 
-#############################---Diffusivity---################################
-def Kd(timeseries):
+def Kd(timeseries,Dbeg=-1,Dend=3,nbin=50):
     MaxLen = 1
     for i in range(len(timeseries)):
         if timeseries[i].shape[1] > MaxLen:
@@ -48,9 +47,26 @@ def Kd(timeseries):
     
     for i in range(len(timeseries)):
         for j in range(len(timeseries[i][0])-1):
-            K[i,j,0] = (timeseries[i][0][j+1]**2-timeseries[i][0][j]**2)/3600/2
+            K[i,j,0] = ((timeseries[i][0][j+1]*1000)**2-(timeseries[i][0][j]*1000)**2)/3600/2
             K[i,j,1] = (timeseries[i][0][j]+timeseries[i][0][j+1])/2
-    return K
+            
+    Dbin = np.logspace(Dbeg,Dend,nbin)
+    Kx = Dbin+Dend/nbin/2
+    Kstat = np.zeros((3,nbin))
+    for i in range(nbin-1):
+        n = 0
+        Ks = []
+        for j in range(len(K)):
+            for k in range(len(K[j])):
+                if K[j,k,1]<Dbin[i+1] and K[j,k,1]>Dbin[i]:
+                    Ks += [K[j,k,0]]
+                    n += 1
+        if n!=0:
+            Kstat[0,i] = np.mean(Ks)
+            Kstat[1,i] = n
+            Kstat[2,i] = np.std(Ks)
+                       
+    return Kx,Kstat
 
 #-------> MAIN <-------
 
@@ -87,8 +103,14 @@ GridGoals, FSLE_ChanceBac = FSLE(ChancePairBac)
 
 xError = np.zeros(len(GridGoals)) #Error space (equal to zero)
 
-#-------> PLOT <-------
+#############################---Diffusivity---################################
+Kx,KPA = Kd(PairAsy)
+Kx,KPF = Kd(PairSyFor)
+Kx,KPB = Kd(PairSyBac)
+Kx,KCF = Kd(ChancePairFor)
+Kx,KCB = Kd(ChancePairBac)
 
+#-------> PLOT <-------
 fig, ax1 = plt.subplots()
 
 ax1.set_yscale('log')
@@ -99,90 +121,55 @@ ax1.set_ylabel('FSLE')
 ax1.errorbar(GridGoals, FSLE_SyFor[0,:],
             xerr=xError,
             yerr=FSLE_SyFor[2,:],
-            fmt='-o', color='pink')
+            fmt='-o', color=(0.5, 0.1, 0.4, 0.9))
 ax1.errorbar(GridGoals, FSLE_SyBac[0,:],
             xerr=xError,
             yerr=FSLE_SyBac[2,:],
-            fmt='-o', color='gray')
+            fmt='-o', color=(0.5, 0.1, 0.4, 0.3))
 ax1.errorbar(GridGoals, FSLE_Asy[0,:],
             xerr=xError,
             yerr=FSLE_Asy[2,:],
-            fmt='-o', color='brown')
+            fmt='-o', color=(0.1, 0.5, 0.2, 0.9))
 ax1.errorbar(GridGoals, FSLE_ChanceFor[0,:],
             xerr=xError,
             yerr=FSLE_ChanceFor[2,:],
-            fmt='-o', color='red')
+            fmt='-o', color=(0.9, 0.3, 0., 0.6))
 ax1.errorbar(GridGoals, FSLE_ChanceBac[0,:],
             xerr=xError,
             yerr=FSLE_ChanceBac[2,:],
-            fmt='-o', color='blue')
+            fmt='-o', color=(0.9, 0.3, 0., 0.2))
 
 ax2 = ax1.twinx() 
 
 
 ax2.set_ylabel('Components')  
-ax2.plot(GridGoals, FSLE_SyFor[1,:], color='pink')
-ax2.plot(GridGoals, FSLE_SyBac[1,:], color='gray')
-ax2.plot(GridGoals, FSLE_Asy[1,:], color='brown')
-ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color='red')
-ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color='blue')
+ax2.plot(GridGoals, FSLE_SyFor[1,:], color=(0.5, 0.1, 0.4, 0.9))
+ax2.plot(GridGoals, FSLE_SyBac[1,:], color=(0.5, 0.1, 0.4, 0.3))
+ax2.plot(GridGoals, FSLE_Asy[1,:], color=(0.1, 0.5, 0.2, 0.9))
+ax2.plot(GridGoals, FSLE_ChanceFor[1,:], color=(0.9, 0.3, 0., 0.6))
+ax2.plot(GridGoals, FSLE_ChanceBac[1,:], color=(0.9, 0.3, 0., 0.2))
 
 
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
 plt.show()
 
-
-####Backward###
-#f2 = plt.figure(2)
-#ax2 = plt.axes()
-#plt.title('Backward FSLE')
-#color = 'tab:red'
-#ax2.set_xlabel('Distance (km)')
-##ax1.set_yscale('log')
-#ax2.set_ylabel('FSLE', color=color)
-#ax2.loglog(GridGoals/1000, FSLE[0,:,1], color=color)
-#ax2.errorbar(GridGoals/1000, FSLE[0,:,1],
-#            xerr=xError,
-#            yerr=FSLE[2,:,1],
-#            fmt='-o', color='red')
-#ax2.tick_params(axis='y', labelcolor=color)
-#
-#ax22 = ax2.twinx()  # instantiate a second axes that shares the same x-axis
-#
-#color = 'tab:blue'
-#ax22.set_ylabel('Components', color=color)  # we already handled the x-label with ax1
-#ax22.plot(GridGoals/1000 , FSLE[1,:,1], color=color)
-#ax22.tick_params(axis='y', labelcolor=color)
-#
-#f2.tight_layout()  # otherwise the right y-label is slightly clipped
-#
-####Comparison###
-#f3 = plt.figure(3)
-#ax3 = plt.axes()
-#plt.title('Symmetry')
-#color = 'tab:red'
-#ax3.set_xlabel('Distance (km)')
-##ax1.set_yscale('log')
-#ax3.set_ylabel('FSLE')
-#ax3.loglog(GridGoals/1000, FSLE[0,:,0], color=color)
-#ax3.errorbar(GridGoals/1000, FSLE[0,:,0],
-#            xerr=xError,
-#            yerr=FSLE[2,:,0],
-#            fmt='-o', color='red')
-#
-#color = 'tab:green'
-#ax3.loglog(GridGoals/1000, FSLE[0,:,1], color=color)
-#ax3.errorbar(GridGoals/1000, FSLE[0,:,1],
-#            xerr=xError,
-#            yerr=FSLE[2,:,1],
-#            fmt='-o', color='green')
-#
-#
-
-K = Kd(Pair) 
-f4 = plt.figure(4,figsize=(10,8))
-ax4 = plt.axes()
+#%%
+ 
+fig, ax4 = plt.subplots()
+ax4.set_yscale('log')
+ax4.set_xscale('log')
 ax4.set_ylabel('Diffusivity K [$m^2$/s]')
 ax4.set_xlabel('Distance (km)')
-for i in K:  
-    ax4.loglog(i[:,1],i[:,0],'o')
+ax4.plot(Kx,KPA[0],'o',color='brown',label='Asy')
+ax4.fill_between(Kx,KPA[0]-KPA[2],KPA[0]+KPA[2],color='brown',alpha=0.3)
+ax4.loglog(Kx,KPB[0],'<',color='gray',label='SyBack')
+ax4.fill_between(Kx,KPB[0]-KPB[2],KPB[0]+KPB[2],color='gray',alpha=0.3)
+ax4.loglog(Kx,KPF[0],'>',color='pink',label='SyForw')
+ax4.fill_between(Kx,KPF[0]-KPF[2],KPF[0]+KPF[2],color='pink',alpha=0.3)
+ax4.loglog(Kx,KCB[0],'<',color='blue',label='ChanceBack')
+ax4.fill_between(Kx,KCB[0]-KCB[2],KCB[0]+KCB[2],color='blue',alpha=0.3)
+ax4.loglog(Kx,KCF[0],'>',color='red',label='ChanceForw')
+ax4.fill_between(Kx,KCF[0]-KCF[2],KCF[0]+KCF[2],color='red',alpha=0.3)
+
+plt.legend()
+plt.show()
