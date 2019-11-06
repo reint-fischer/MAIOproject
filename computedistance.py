@@ -11,7 +11,7 @@ import pandas as pd
 
 def ComputeDistance(ID1,ID2,Data_Mediterrenean):
     id1 = [] #select only the 1st ID from all Mediterrenean data
-    id2 = [] #select only the 1st ID from all Mediterrenean data
+    id2 = [] #select only the 2nd ID from all Mediterrenean data
     for i in range(len(Data_Mediterrenean[0])):
         if Data_Mediterrenean[0,i] == ID1: #select right ID
             id1 +=[[Data_Mediterrenean[1,i],Data_Mediterrenean[2,i],Data_Mediterrenean[3,i]]] #save latitude, longitude, time
@@ -45,10 +45,10 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
 
 if __name__ == "__main__":
     nd = np.genfromtxt('Data/MedSeaIDs.txt',delimiter=',')
-#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131969,131970,nd)
+#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131973,131974,nd)
     pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
     for i in range(len(pairs)):
         d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
         np.savetxt('Data/BackwardsDistances/BDPair{0}.csv'.format(i),np.asarray((d1,t1)),delimiter = ',')
         np.savetxt('Data/ForwardDistances/FDPair{0}.csv'.format(i),np.asarray((d2,t2)),delimiter = ',')  
-#    
+    

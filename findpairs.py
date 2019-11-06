@@ -21,7 +21,7 @@ Pair = SelectPair(Data_Mediterrean) #Find chance pairs
 
 k = 0 
 UnPair = np.zeros([50,2])
-for i in range (0,70):
+for i in range (0,len(Pair)):
     A = Pair[i]
     B = [A[1] ,A[0]]
     if not (B in Pair): print('Fuck it') #There's always another
