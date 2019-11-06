@@ -45,7 +45,6 @@ def ComputeDistance(ID1,ID2,Data_Mediterrenean):
 
 if __name__ == "__main__":
     nd = np.genfromtxt('Data/MedSeaIDs.txt',delimiter=',')
-#    d,t,d1,d2,t1,t2,mind = ComputeDistance(131973,131974,nd)
     pairs = np.genfromtxt('Data/UnPair.txt', delimiter=',')
     for i in range(len(pairs)):
         d,t,d1,d2,t1,t2,mind = ComputeDistance(pairs[i,0],pairs[i,1],nd)
