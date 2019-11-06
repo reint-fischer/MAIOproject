@@ -1,7 +1,6 @@
-from netCDF4 import Dataset,num2date
+from netCDF4 import Dataset
 import numpy as np
 import math as m
-import pandas as pd
 
 def Conversion(D):  #Convert the data set to distance from the left down angle (30N 5E)
     Earth_radius = 6371.0 #[m]
@@ -41,9 +40,9 @@ def selectMedsea(ID,lat,lon,time):
 #%%
 if __name__ == '__main__':
     ID,latitude,longitude,time = OpenDrifterdata('C:/Users/Gebruiker/Downloads/driftertrajGPS_1.03.nc') #Open netcdf file
-#    Data_Mediterrean = selectMedsea(ID,latitude, longitude, time) #select measurements made in Mediterrenean
-#    np.savetxt('Data/MedSeaIDslonlat.txt',Data_Mediterrean,delimiter=',') #save data of all measurements made in the Mediterrenean
-#    Data_Mediterrean = Conversion(Data_Mediterrean) #convert measurements to flat grid
-#    np.savetxt('Data/MedSeaIDs.txt',Data_Mediterrean,delimiter=',') #save data of all converted measurements
+    Data_Mediterrean = selectMedsea(ID,latitude, longitude, time) #select measurements made in Mediterrenean
+    np.savetxt('Data/MedSeaIDslonlat.txt',Data_Mediterrean,delimiter=',') #save data of all measurements made in the Mediterrenean
+    Data_Mediterrean = Conversion(Data_Mediterrean) #convert measurements to flat grid
+    np.savetxt('Data/MedSeaIDs.txt',Data_Mediterrean,delimiter=',') #save data of all converted measurements
 
     
